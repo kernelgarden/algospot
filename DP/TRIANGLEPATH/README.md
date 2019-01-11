@@ -3,6 +3,7 @@
 https://algospot.com/judge/problem/read/TRIANGLEPATH
 
 ```
+$cat input.txt | go run main.go
 ```
 
 ## 문제
