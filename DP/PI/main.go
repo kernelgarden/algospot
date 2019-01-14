@@ -52,7 +52,7 @@ func main() {
 func GetTotalScore(num string) int {
 	cache := make([]int, len(num))
 	for i := 0; i < len(num); i++ {
-		cache[i] = -1
+		cache[i] = math.MaxInt32
 	}
 
 	return getScore(num, -1, cache)
@@ -64,36 +64,20 @@ func getScore(num string, lastIdx int, cache []int) int {
 		return 0
 	}
 
-	if cache[beginIdx] != -1 {
+	if cache[beginIdx] != math.MaxInt32 {
 		return cache[beginIdx]
 	}
 
-	low := math.MaxInt32
 	for i := 3; i <= 5; i++ {
 		if beginIdx + i <= len(num) {
-			low = min(low, score(num, beginIdx, beginIdx + i) + getScore(num, lastIdx + i, cache))
-			/*
-			ret := score(num, beginIdx, beginIdx + i) + getScore(num, lastIdx + i, cache)
-			//fmt.Printf("begin:%v, i:%v, ret:%v\n", beginIdx, i, ret)
-			if ret < low {
-				low = ret
-				//fmt.Printf("i: %v, beginIdx: %v, low: %v\n", i, lastIdx + 1, low)
-			}
-			*/
+			cache[beginIdx] = min(cache[beginIdx], score(num, beginIdx, beginIdx + i) + getScore(num, lastIdx + i, cache))
 		}
 	}
 
-	cache[beginIdx] = low
-	return low
+	return cache[beginIdx]
 }
 
 func score(num string, startIdx, endIdx int) int {
-	/*
-	if endIdx > len(num) {
-		return math.MaxInt32
-	}
-	*/
-
 	piece := num[startIdx : endIdx]
 
 	if checkAllSame(piece) {
