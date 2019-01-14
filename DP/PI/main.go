@@ -60,7 +60,7 @@ func GetTotalScore(num string) int {
 
 func getScore(num string, lastIdx int, cache []int) int {
 	beginIdx := lastIdx + 1
-	if beginIdx >= len(num) {
+	if beginIdx == len(num) {
 		return 0
 	}
 
