@@ -80,19 +80,28 @@ func getScore(num string, lastIdx int, cache []int) int {
 func score(num string, startIdx, endIdx int) int {
 	piece := num[startIdx : endIdx]
 
+	var isArithmeticSeq bool
+	var diff int
+
 	if checkAllSame(piece) {
 		return 1
-	} else if flag, diff := checkArithmeticSeq(piece); flag {
-		if diff == -1 || diff == 1 {
-			return 2
-		} else {
-			return 5
-		}
-	} else if checkInterval(piece) {
-		return 4
-	} else {
-		return 10
 	}
+
+	isArithmeticSeq, diff = checkArithmeticSeq(piece)
+	diff = abs(diff)
+	if isArithmeticSeq && diff == 1 {
+		return 2
+	}
+
+	if checkInterval(piece) {
+		return 4
+	}
+
+	if isArithmeticSeq {
+		return 5
+	}
+
+	return 10
 }
 
 func checkAllSame(piece string) bool {
@@ -107,17 +116,9 @@ func checkAllSame(piece string) bool {
 }
 
 func checkInterval(piece string) bool {
-	first, second := piece[0], piece[1]
-
-	for i := 2; i < len(piece); i++ {
-		if i % 2 == 0 {
-			if piece[i] != first {
-				return false
-			}
-		} else {
-			if piece[i] != second {
-				return false
-			}
+	for i := 0; i < len(piece); i++ {
+		if piece[i] != piece[i % 2] {
+			return false
 		}
 	}
 
@@ -125,19 +126,13 @@ func checkInterval(piece string) bool {
 }
 
 func checkArithmeticSeq(piece string) (bool, int) {
-	first, second := piece[0], piece[1]
-	diff := second - first
-
-	prev := second
-	for i := 2; i < len(piece); i++ {
-		if prev + diff != piece[i] {
+	for i := 0; i < len(piece) - 1; i++ {
+		if (piece[i + 1] - piece[i]) != (piece[1] - piece[0]) {
 			return false, 0
-		} else {
-			prev = piece[i]
 		}
 	}
 
-	return true, int(diff)
+	return true, int(piece[1] - piece[0])
 }
 
 func min(a, b int) int {
@@ -145,5 +140,13 @@ func min(a, b int) int {
 		return a
 	} else {
 		return b
+	}
+}
+
+func abs(a int) int {
+	if a < 0 {
+		return a * -1
+	} else {
+		return a
 	}
 }
