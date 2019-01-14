@@ -70,7 +70,7 @@ func getScore(num string, lastIdx int, cache []int) int {
 
 	low := math.MaxInt32
 	for i := 3; i <= 5; i++ {
-		//if beginIdx + i < len(num) {
+		if beginIdx + i <= len(num) {
 			low = min(low, score(num, beginIdx, beginIdx + i) + getScore(num, lastIdx + i, cache))
 			/*
 			ret := score(num, beginIdx, beginIdx + i) + getScore(num, lastIdx + i, cache)
@@ -80,7 +80,7 @@ func getScore(num string, lastIdx int, cache []int) int {
 				//fmt.Printf("i: %v, beginIdx: %v, low: %v\n", i, lastIdx + 1, low)
 			}
 			*/
-		//}
+		}
 	}
 
 	cache[beginIdx] = low
@@ -88,9 +88,11 @@ func getScore(num string, lastIdx int, cache []int) int {
 }
 
 func score(num string, startIdx, endIdx int) int {
+	/*
 	if endIdx > len(num) {
 		return math.MaxInt32
 	}
+	*/
 
 	piece := num[startIdx : endIdx]
 
