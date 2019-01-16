@@ -3,8 +3,8 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"math"
 	"os"
-	"sort"
 )
 
 var scanner = bufio.NewScanner(os.Stdin)
@@ -59,8 +59,9 @@ func getJLIS(n, m int, nums1, nums2 []int) int {
 	}
 
 	longest := 0
-	for i := 0; i < n; i++ {
-		for j := 0; j < m; j++ {
+	for i := -1; i < n; i++ {
+		for j := -1; j < m; j++ {
+			fmt.Printf("[Start] => i: %v, j: %v\n", i, j)
 			longest = max(longest, jlis(nums1, nums2, i, j, cache))
 		}
 	}
@@ -69,63 +70,52 @@ func getJLIS(n, m int, nums1, nums2 []int) int {
 }
 
 func jlis(nums1, nums2 []int, start1, start2 int, cache [][]int) int {
-	if cache[start1][start2] != -1 {
-		return cache[start1][start2]
+	indexA := start1 + 1
+	indexB := start2 + 1
+
+	if indexA >= len(nums1) || indexB >= len(nums2){
+		return 0
 	}
 
+	fmt.Printf("indexA: %v, indexB: %v\n", indexA, indexB)
+
+	if cache[indexA][indexB] != -1 {
+		fmt.Printf("[DEBUG] cache hit! start1:%v, start2: %v\n", indexA, indexB)
+		return cache[indexA][indexB]
+	}
+
+	var num1, num2 int
+	if start1 == -1 {
+		num1 = math.MinInt64
+	} else {
+		num1 = nums1[start1]
+	}
+
+	if start2 == -1 {
+		num2 = math.MinInt64
+	} else {
+		num2 = nums2[start2]
+	}
+
+	maxNum := max(num1, num2)
 	longest := 2
 
-	prev := nums1[start1]
-	n := len(nums1)
-	for i := start1 + 1; i < n; i++ {
-		if nums1[i] > prev {
-			longest = max(longest, jlis(nums1, nums2, i, start2, cache))
-			prev = nums1[i]
+	for i := start1 + 1; i < len(nums1); i++ {
+		if nums1[i] > maxNum {
+			longest = max(longest, jlis(nums1, nums2, i, start2, cache) + 1)
+			fmt.Printf("[DEBUG] longest:%v, i:%v , j:%v \n", longest, i, start2)
 		}
 	}
 
-	m := len(nums2)
-	prev = nums2[start2]
-	for i := start2 + 1; i < m; i++ {
-		if nums2[i] > prev {
-			longest = max(longest, jlis(nums1, nums2, start1, i, cache))
-			prev = nums2[i]
+	for i := start2 + 1; i < len(nums2); i++ {
+		if nums2[i] > maxNum {
+			longest = max(longest, jlis(nums1, nums2, start1, i, cache) + 1)
+			fmt.Printf("[DEBUG] longest:%v, i:%v, j:%v \n", longest, start1, i)
 		}
 	}
 
-	cache[start1][start2] = longest
-	return cache[start1][start2]
-}
-
-func join(nums1, nums2 []int) []int {
-	n := len(nums1)
-	m := len(nums2)
-	ret := make([]int, 0, n + m)
-
-	ret = append(ret, nums1...)
-	ret = append(ret, nums2...)
-
-	sort.Ints(ret)
-
-	return ret
-}
-
-// 정렬이 되있다고 가정한다.
-func removeDuplicated(sortedNums []int) []int {
-	ret := make([]int, 0, len(sortedNums))
-
-	if len(sortedNums) > 0 {
-		last := sortedNums[0]
-		ret = append(ret, last)
-		for i := 1; i < len(sortedNums); i++ {
-			if sortedNums[i] > last {
-				ret = append(ret, sortedNums[i])
-				last = sortedNums[i]
-			}
-		}
-	}
-
-	return ret
+	cache[indexA][indexB] = longest
+	return cache[indexA][indexB]
 }
 
 func max(a, b int) int {

@@ -55,7 +55,8 @@ func GetTotalScore(num string) int {
 		cache[i] = math.MaxInt32
 	}
 
-	return getScore(num, -1, cache)
+	ret := getScore(num, -1, cache)
+	return ret
 }
 
 func getScore(num string, lastIdx int, cache []int) int {
@@ -131,7 +132,6 @@ func checkArithmeticSeq(piece string) (bool, int) {
 			return false, 0
 		}
 	}
-
 	return true, int(piece[1] - piece[0])
 }
 
